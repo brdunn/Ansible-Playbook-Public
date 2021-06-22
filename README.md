@@ -7,3 +7,21 @@ This Ansible playbook was created to easily deploy the services that I use on my
 1. ```usermod -aG sudo ansible```
 1. Add the following line to /etc/sudoers:
     ```ansible ALL=(ALL) NOPASSWD: ALL```
+
+## Create Inventories
+To use the playbooks and roles, you must have host files and group_vars created for each playbook. The structure should be as follows:
+├── inventories
+│   └── prod
+│       ├── group_vars
+│       │   ├── alertmanager.yml
+│       │   ├── all.yml
+│       │   ├── node_exporter.yml
+│       │   ├── pihole.yml
+│       │   ├── plex.yml
+│       │   ├── prometheus.yml
+│       │   └── proxmox.yml
+│       └── hosts
+├── playbooks
+│   └── ...
+└── roles
+    └── ...
