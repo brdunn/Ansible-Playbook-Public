@@ -10,6 +10,7 @@ This Ansible playbook was created to easily deploy the services that I use on my
 
 ## Create Inventories
 To use the playbooks and roles, you must have host files and group_vars created for each playbook. The structure should be as follows:
+```
 ├── inventories
 │   └── prod
 │       ├── group_vars
@@ -25,3 +26,4 @@ To use the playbooks and roles, you must have host files and group_vars created 
 │   └── ...
 └── roles
     └── ...
+```
