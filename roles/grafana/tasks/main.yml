@@ -1,0 +1,63 @@
+---
+
+- name: Install grafana dependencies
+  apt:
+    name:
+      - adduser
+      - libfontconfig1
+    state: present
+  become: true
+  become_user: root
+
+- name: Download Grafana
+  get_url:
+    url: https://dl.grafana.com/oss/release/grafana_{{ grafana_version }}_amd64.deb
+    dest: /tmp
+
+- name: Install Grafana
+  apt:
+    deb: /tmp/grafana_{{ grafana_version }}_amd64.deb
+  become: true
+  become_user: root
+  notify: restart grafana
+
+- name: Copy cert
+  copy:
+    content: "{{ wildcard_cert }}"
+    dest: /etc/grafana/grafana.crt
+    owner: grafana
+    group: grafana
+    mode: 0640
+  become: true
+  become_user: root
+  notify: restart grafana
+
+- name: Copy key
+  copy:
+    content: "{{ wildcard_key }}"
+    dest: /etc/grafana/grafana.key
+    owner: grafana
+    group: grafana
+    mode: 0640
+  become: true
+  become_user: root
+  notify: restart grafana
+
+- name: Configure Grafana
+  copy:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+    owner: grafana
+    group: grafana
+    mode: 0640
+  become: true
+  become_user: root
+  notify: restart grafana
+
+- name: enable grafana on boot
+  systemd:
+    name: grafana-server
+    enabled: true
+    state: started
+  become: true
+  become_user: root

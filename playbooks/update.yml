@@ -1,0 +1,7 @@
+---
+
+- name: General System update for Ubuntu Server
+  hosts: ubuntu_servers
+  serial: 1
+  roles:
+    - update

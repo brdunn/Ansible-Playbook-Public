@@ -1,0 +1,15 @@
+---
+
+alertmanager_version: 0.22.0
+
+alertmanager_binary_install_dir: /usr/bin
+alertmanager_config_dir: /etc/alertmanager
+alertmanager_storage_dir: /var/lib/alertmanager
+
+alertmanager_port: 9093
+
+alertmanager_user: alertmanager
+alertmanager_group: alertmanager
+
+alertmanager_email: ~
+alertmanager_email_password: ~

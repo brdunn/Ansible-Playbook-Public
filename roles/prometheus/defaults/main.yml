@@ -1,0 +1,21 @@
+---
+
+prometheus_version: 2.27.1
+
+prometheus_binary_install_dir: /usr/bin
+prometheus_config_dir: /etc/prometheus
+prometheus_db_dir: /var/lib/prometheus
+
+prometheus_web_listen_address: "0.0.0.0:9090"
+
+prometheus_user: prometheus
+prometheus_group: prometheus
+
+prometheus_storage_retention: "30d"
+
+# Maximum number of bytes that can be stored for blocks. Units
+# supported: KB, MB, GB, TB, PB.
+prometheus_storage_retention_size: "0"
+
+alertmanager_ip: localhost
+alertmanager_port: 9093

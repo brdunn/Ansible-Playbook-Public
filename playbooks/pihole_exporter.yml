@@ -1,0 +1,6 @@
+---
+
+- name: Installs PiHole Exporter
+  hosts: pihole
+  roles:
+    - pihole_exporter

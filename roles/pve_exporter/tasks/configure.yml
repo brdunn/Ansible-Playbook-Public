@@ -1,0 +1,43 @@
+---
+
+- name: Make sure /etc/pve_exporter exists
+  file:
+    path: /etc/pve_exporter
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  become: true
+  become_user: root
+
+
+- name: Copy configuration file
+  template:
+    src: pve.yml.j2
+    dest: /etc/pve_exporter/pve.yml
+    owner: pve_exporter
+    group: pve_exporter
+    mode: 0600
+  become: true
+  become_user: root
+  notify: restart pve_exporter
+
+- name: Copy the pve_exporter systemd service file
+  template:
+    src: pve_exporter.service.j2
+    dest: /etc/systemd/system/pve_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  become_user: root
+  notify: restart pve_exporter
+
+- name: Ensure the exporter is enabled on boot
+  systemd:
+    daemon_reload: true
+    name: pve_exporter
+    enabled: true
+    state: started
+  become: true
+  become_user: root

@@ -1,0 +1,6 @@
+---
+
+- name: Installs PVE Exporter
+  hosts: proxmox
+  roles:
+    - pve_exporter

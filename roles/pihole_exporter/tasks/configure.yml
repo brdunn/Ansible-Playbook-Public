@@ -1,0 +1,21 @@
+---
+
+- name: Copy the pihole_exporter systemd service file
+  template:
+    src: pihole_exporter.service.j2
+    dest: /etc/systemd/system/pihole_exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  become_user: root
+  notify: restart pihole_exporter
+
+- name: Ensure PiHole Exporter is enabled on boot
+  systemd:
+    daemon_reload: true
+    name: pihole_exporter
+    enabled: true
+    state: started
+  become: true
+  become_user: root

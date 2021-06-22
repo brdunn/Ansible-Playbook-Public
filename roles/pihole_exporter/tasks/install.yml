@@ -1,0 +1,28 @@
+---
+
+- name: Create the pihole_exporter group
+  group:
+    name: "{{ pihole_exporter_group }}"
+    state: present
+    system: true
+  become: true
+  become_user: root
+
+- name: Create the pihole_exporter user
+  user:
+    name: "{{ pihole_exporter_user }}"
+    group: "{{ pihole_exporter_group }}"
+    shell: /usr/sbin/nologin
+    system: true
+    create_home: false
+  become: true
+  become_user: root
+
+- name: Download pihole_exporter binary
+  get_url:
+    url: https://github.com/eko/pihole-exporter/releases/download/{{ pihole_exporter_version }}/pihole_exporter-linux-amd64
+    dest: "/usr/bin/pihole_exporter"
+    mode: 0755
+  async: 600
+  become: true
+  become_user: root

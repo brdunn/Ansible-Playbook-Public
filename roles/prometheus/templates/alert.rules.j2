@@ -1,0 +1,103 @@
+{{ ansible_managed | comment }}
+
+groups:
+- name: Prometheus/Alertmanager
+  rules:
+  - alert: Watchdog
+    expr: vector(1)
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      description: "This is an alert meant to ensure that the entire alerting pipeline is functional.\nThis alert is always firing, therefore it should always be firing in Alertmanager\nand always fire against a receiver. There are integrations with various notification\nmechanisms that send a notification when this alert is not firing. For example the\n\"DeadMansSnitch\" integration in PagerDuty."
+      summary: 'Ensure entire alerting pipeline is functional'
+- name: Node Level
+  rules:
+  - alert: InstanceDown
+    expr: 'up == 0'
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes.{% endraw %}'
+      summary: '{% raw %}Instance {{ $labels.instance }} down{% endraw %}'
+  - alert: HostHighCpuLoad
+    expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{% raw %}Host high CPU load (instance {{ $labels.instance }}){% endraw %}'
+      description: '{% raw %}CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}{% endraw %}'
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable_bytes{} / node_memory_MemTotal_bytes{} * 100 < 10
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{% raw %}Host out of memory (instance {{ $labels.instance }}){% endraw %}'
+      description: '{% raw %}Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}{% endraw %}'
+  - alert: HostLowDiskSpace
+    expr: (node_filesystem_avail_bytes{} * 100) / node_filesystem_size_bytes{}  < 10
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{% raw %}Host out of disk space (instance {{ $labels.instance }}){% endraw %}'
+      description: '{% raw %}Disk is almost full (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}{% endraw %}'
+  - alert: RebootRequired
+    expr: 'node_reboot_required > 0'
+    labels:
+      severity: warning
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} requires a reboot.{% endraw %}'
+      summary: '{% raw %}Instance {{ $labels.instance }} - reboot required{% endraw %}'
+  - alert: NodeFilesystemAlmostOutOfFiles
+    annotations:
+      description: '{% raw %}Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.{% endraw %}'
+      summary: 'Filesystem has less than 3% inodes left.'
+    expr: "(\n  node_filesystem_files_free{job=\"node\",fstype!=\"\"} / node_filesystem_files{job=\"node\",fstype!=\"\"} * 100 < 3\nand\n  node_filesystem_readonly{job=\"node\",fstype!=\"\"} == 0\n)\n"
+    for: 1h
+    labels:
+      severity: critical
+  - alert: NodeNetworkReceiveErrs
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} receive errors in the last two minutes.{% endraw %}'
+      summary: 'Network interface is reporting many receive errors.'
+    expr: "increase(node_network_receive_errs_total[2m]) > 10\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeNetworkTransmitErrs
+    annotations:
+      description: '{% raw %}{{ $labels.instance }} interface {{ $labels.device }} has encountered {{ printf "%.0f" $value }} transmit errors in the last two minutes.{% endraw %}'
+      summary: 'Network interface is reporting many transmit errors.'
+    expr: "increase(node_network_transmit_errs_total[2m]) > 10\n"
+    for: 1h
+    labels:
+      severity: warning
+  - alert: NodeHighNumberConntrackEntriesUsed
+    annotations:
+      description: '{% raw %}{{ $value | humanizePercentage }} of conntrack entries are used{% endraw %}'
+      summary: 'Number of conntrack are getting close to the limit'
+    expr: "(node_nf_conntrack_entries / node_nf_conntrack_entries_limit) > 0.75\n"
+    labels:
+      severity: warning
+- name: Proxmox
+  rules:
+  - alert: HostHighCpuLoad
+    expr: pve_cpu_usage_ratio{id="node/Zeus"} > 0.80 
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{% raw %}Host high CPU load (instance {{ $labels.instance }}){% endraw %}'
+      description: '{% raw %}CPU load is > 80%\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}{% endraw %}'
+  - alert: HostOutOfMemory
+    expr: pve_memory_usage_bytes{id="node/Zeus"} / pve_memory_size_bytes{id="node/Zeus"} > 0.95
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: '{% raw %}Host out of memory (instance {{ $labels.instance }}){% endraw %}'
+      description: '{% raw %}Node memory is filling up (< 10% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}{% endraw %}'

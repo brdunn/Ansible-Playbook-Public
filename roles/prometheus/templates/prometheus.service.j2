@@ -1,0 +1,25 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Prometheus
+After=network-online.target
+
+[Service]
+Type=simple
+Environment="GOMAXPROCS={{ ansible_processor_vcpus | default(ansible_processor_count) }}"
+User={{ prometheus_user }}
+Group={{ prometheus_group }}
+ExecStart={{ prometheus_binary_install_dir }}/prometheus \
+  --config.file={{ prometheus_config_dir }}/prometheus.yml \
+  --storage.tsdb.path={{ prometheus_db_dir }} \
+  --storage.tsdb.retention.time={{ prometheus_storage_retention }} \
+  --storage.tsdb.retention.size={{ prometheus_storage_retention_size }} \
+  --web.listen-address={{ prometheus_web_listen_address }}
+
+ReadWritePaths={{ prometheus_db_dir }}
+
+SyslogIdentifier=prometheus
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

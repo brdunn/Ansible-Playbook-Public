@@ -1,0 +1,31 @@
+---
+
+- name: create alertmanager system group
+  group:
+    name: "{{ alertmanager_group }}"
+    system: true
+    state: present
+  become: true
+  become_user: root
+
+- name: create alertmanager system user
+  user:
+    name: "{{ alertmanager_user }}"
+    system: true
+    shell: "/usr/sbin/nologin"
+    group: "{{ alertmanager_group }}"
+    createhome: false
+  become: true
+  become_user: root
+
+- include: install.yml
+
+- include: configure.yml
+
+- name: ensure alertmanager service is started and enabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: alertmanager
+    state: started
+    enabled: true

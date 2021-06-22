@@ -1,0 +1,6 @@
+---
+
+grafana_version: 8.0.1
+
+wildcard_cert: ~
+wildcard_key: ~

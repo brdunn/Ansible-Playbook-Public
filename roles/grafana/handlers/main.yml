@@ -1,0 +1,9 @@
+---
+
+- name: restart grafana
+  systemd:
+    daemon_reload: true
+    name: grafana-server
+    state: restarted
+  become: true
+  become_user: root

@@ -1,0 +1,8 @@
+---
+
+- name: restart pihole_exporter
+  become: true
+  systemd:
+    daemon_reload: true
+    name: pihole_exporter
+    state: restarted

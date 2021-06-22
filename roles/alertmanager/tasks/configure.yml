@@ -1,0 +1,35 @@
+---
+
+- name: create alertmanager configuration directories
+  file:
+    path: "{{ alertmanager_config_dir }}"
+    state: directory
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: 0770
+  become: true
+  become_user: root
+
+- name: configure alertmanager
+  template:
+    src: alertmanager.yml.j2
+    dest: "{{ alertmanager_config_dir }}/alertmanager.yml"
+    owner: "{{ alertmanager_user }}"
+    group: "{{ alertmanager_group }}"
+    mode: 0640
+  notify:
+    - reload alertmanager
+  become: true
+  become_user: root
+
+- name: create alertmanager systemd service unit
+  template:
+    src: alertmanager.service.j2
+    dest: /etc/systemd/system/alertmanager.service
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  become_user: root
+  notify:
+    - restart alertmanager

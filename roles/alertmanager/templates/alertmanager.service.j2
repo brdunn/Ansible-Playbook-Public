@@ -1,0 +1,21 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=Alertmanager
+After=network-online.target
+
+[Service]
+Type=simple
+User=prometheus
+Group=prometheus
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart={{ alertmanager_binary_install_dir }}/alertmanager \
+  --config.file={{ alertmanager_config_dir }}/alertmanager.yml \
+  --storage.path={{ alertmanager_storage_dir }}/data
+
+SyslogIdentifier=alertmanager
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

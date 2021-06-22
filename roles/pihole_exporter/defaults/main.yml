@@ -1,0 +1,9 @@
+---
+
+pihole_exporter_version: 0.0.10
+pihole_port: 9617
+
+pihole_admin_password: ~
+
+pihole_exporter_user: pihole_exporter
+pihole_exporter_group: pihole_exporter

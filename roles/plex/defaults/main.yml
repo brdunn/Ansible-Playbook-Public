@@ -1,0 +1,5 @@
+---
+
+plex_unix_username: plex
+plex_unix_group: plex
+plex_unix_password: ~

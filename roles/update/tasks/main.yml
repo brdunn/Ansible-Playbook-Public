@@ -1,0 +1,19 @@
+---
+
+- name: Update system
+  apt:
+    update_cache: true
+    upgrade: true
+    autoremove: true
+  register: upgrade_result
+  become: true
+  become_user: root
+
+- name: Display upgrade results
+  debug:
+    var: upgrade_result.stdout
+
+- name: reboot server
+  reboot:
+  become: true
+  become_user: root

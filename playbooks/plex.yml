@@ -1,0 +1,6 @@
+---
+
+- name: Install and configure Plex Media Server
+  hosts: plex
+  roles:
+    - plex

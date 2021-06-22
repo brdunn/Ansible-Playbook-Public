@@ -1,0 +1,36 @@
+---
+
+- name: Install dependencies
+  apt:
+    name: cifs-utils
+    state: present
+  become: true
+  become_user: root
+
+- name: Create /etc/plexmediaserver
+  file:
+    path: /etc/plexmediaserver
+    owner: "{{ plex_unix_user }}"
+    group: "{{ plex_unix_group }}"
+    mode: 0755
+    state: directory
+  become: true
+  become_user: root
+
+- name: Setup credentials file
+  template:
+    src: ".smbcredentials.j2"
+    dest: /etc/plexmediaserver/.smbcredentials
+    owner: "{{ plex_unix_user }}"
+    group: "{{ plex_unix_group }}"
+    mode: 0600
+  become: true
+  become_user: root
+
+- name: Add TrueNAS as a network mount
+  lineinfile:
+    path: /etc/fstab
+    line: "//192.168.2.1/MainDisk/SharedMedia /mnt/media cifs vers=3.0,credentials=/etc/plexmediaserver/.smbcredentials,iocharset=utf8,uid=997,gid=997 0 0"
+    state: present
+  become: true
+  become_user: root

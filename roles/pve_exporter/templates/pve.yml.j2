@@ -1,0 +1,6 @@
+{{ ansible_managed | comment }}
+
+default:
+    user: {{ pve_username }}@pam
+    password: {{ pve_password }}
+    verify_ssl: false

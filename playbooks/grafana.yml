@@ -1,0 +1,6 @@
+---
+
+- name: Installs Grafana
+  hosts: grafana
+  roles:
+    - grafana

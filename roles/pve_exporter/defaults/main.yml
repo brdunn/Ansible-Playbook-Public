@@ -1,0 +1,7 @@
+---
+
+pve_exporter_user: pve_exporter
+pve_exporter_group: pve_exporter
+
+pve_username: ~
+pve_password: ~
